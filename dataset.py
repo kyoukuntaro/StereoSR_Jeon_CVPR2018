@@ -7,15 +7,14 @@ import matplotlib.pyplot as plt
 import torch.utils.data
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, img_folder):
+    def __init__(self, img_folder, scale_factor, train_data_size):
         super(Dataset, self).__init__()
         self.N = 800     #ファイル数
         self.L = 33      #入力サイズ
-        self.S = 2       #倍率
-        self.D = 20000   #生成するデータ数
+        self.S = scale_factor       #倍率
+        self.D = train_data_size   #生成するデータ数
         self.SH = 64     #シフトする画像の数
         np.random.seed(0)
-        #TODO:画像はダウンロード済みを仮定
         #ステレオ画像のファイル名にルールあり
         if not 'data' in os.listdir('./'):
             make_input(img_folder,self.N, self.L, self.S, self.D, self.SH)

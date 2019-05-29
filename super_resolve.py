@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+import argparse
 
 import torch
 import torch.cuda
@@ -8,15 +9,19 @@ import torch.cuda
 from net import StereoSRChrominance, StereoSRLuminance
 
 def main():
-    img_dir = 'D:/dataset/sutereo/Test/'
+    parser = argparse.ArgumentParser(description='Make Super Resolution Image')
+    parser.add_argument('--left_image', type=str, help='left_image')
+    parser.add_argument('--right_image', type=str, help='right_image')
+    parser.add_argument('--scale_factor', type=int, default=2, help='scale factor')
+    opt = parser.parse_args()
     L = 33
-    S = 2
+    S = opt.scale_factor
     SH = 64
 
     device = torch.device('cuda' if torch.cuda.is_available() else ('cpu'))
 
-    img_L = np.array(Image.open(img_dir+'008_L.png').convert('YCbCr'),dtype='uint8')
-    img_R = np.array(Image.open(img_dir+'008_R.png').convert('YCbCr'),dtype='uint8')
+    img_L = np.array(Image.open(opt.left_image).convert('YCbCr'),dtype='uint8')
+    img_R = np.array(Image.open(opt.right_image).convert('YCbCr'),dtype='uint8')
 
     img_size = int(img_L.shape[0]/(L*S))*int((img_L.shape[1]-SH*S)/(L*S))
     input = np.zeros([img_size,67,L*S,L*S],dtype='float')
